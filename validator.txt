@@ -1,0 +1,19 @@
+ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<TinTuc>> violations = validator.validate(tinTuc);
+		
+		if (violations.isEmpty()) {
+	        tinTucDAO.addTinTuc(tinTuc);
+	        response.sendRedirect(request.getContextPath());
+        }
+		else {
+        	RequestDispatcher dispatcher = request.getRequestDispatcher("view/html/tinTucForm.jsp");
+            
+            StringBuilder stringBuilder = new StringBuilder();
+            violations.forEach(violation -> {
+            	stringBuilder.append(violation.getPropertyPath() + ": " + violation.getMessage());
+            });
+            
+            request.setAttribute("errors", stringBuilder);
+            dispatcher.forward(request, response);
+        }
